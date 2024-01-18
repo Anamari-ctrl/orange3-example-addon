@@ -6,12 +6,13 @@ from Orange.widgets.settings import Setting
 from Orange.widgets.widget import OWWidget, Input, Output, Msg
 from AnyQt.QtWidgets import (
     QStyle, QComboBox, QMessageBox, QGridLayout, QLabel,
-    QLineEdit, QSizePolicy as Policy, QCompleter, QVBoxLayout, QSlider
+    QLineEdit, QSizePolicy as Policy, QCompleter, QVBoxLayout
 )
 from AnyQt.QtCore import Qt, QSize
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QFileDialog, QPushButton
 from PIL import Image
+from Orange.widgets import gui
 
 
 class ImageWidget(QWidget):
@@ -26,12 +27,13 @@ class ImageWidget(QWidget):
         layout.addWidget(self.image_preview)
         self.setLayout(layout)
 
-    def set_images(self, image1_array, image2_array):
+    def set_images(self, image1_array, image2_array, alpha):
         self.image1_array = image1_array
         self.image2_array = image2_array
-        self.resize_blend_images()
+        self.alpha = alpha
+        self.resize_blend_images(alpha)
 
-    def resize_blend_images(self):
+    def resize_blend_images(self, alpha):
         if not self.image1_array.size or not self.image2_array.size:
             return  # One or both images not available
 
@@ -41,10 +43,13 @@ class ImageWidget(QWidget):
         )
         img1_resized = Image.fromarray(self.image1_array).resize(target_size)
         img2_resized = Image.fromarray(self.image2_array).resize(target_size)
-        self.blend_images(img1_resized, img2_resized)
+        self.blend_images(img1_resized, img2_resized, alpha)
 
-    def blend_images(self, image1, image2):
-        alpha = 0.5
+    def blend_images(self, image1, image2, alpha):
+        print(f"alpha is: {alpha}")
+        if alpha is None:
+            alpha = 0.5
+        print(f"tip alphe: {type(alpha)}")
         blended_img = alpha * np.array(image1) + (1 - alpha) * np.array(image2)
         blended_image = np.clip(blended_img, 0, 255).astype(np.uint8)
         self.display_image(blended_image)
@@ -60,9 +65,8 @@ class ImageWidget(QWidget):
         qimage = QImage(array.data, width, height, bytes_per_line, QImage.Format_RGB888)
         return qimage
 
-
 class BlendImages(OWWidget):
-    name = "Blend two images - with slider"
+    name = "Blend two images - slider implementation"
     description = "Blend uploaded images"
     icon = "icons/blend.png"
     priority = 100
@@ -78,8 +82,9 @@ class BlendImages(OWWidget):
     class Outputs:
         image = Output("image", np.ndarray, auto_summary=False)
 
-    proportion = settings.Setting(50)
-    commitOnChange = settings.Setting(0)
+    # proportion = settings.Setting(50)
+    # commitOnChange = settings.Setting(0)
+    slider_setting = settings.Setting(50, min=0, max=100)
 
     want_main_area = False
     buttons_area_orientation = False
@@ -87,13 +92,11 @@ class BlendImages(OWWidget):
     def __init__(self):
         super().__init__()
 
-
-        # Add the custom slider
         slider_box = gui.widgetBox(self.controlArea, "Blend Proportion")
         self.slider = gui.hSlider(
-            slider_box, self, "proportion",
-            minValue=0, maxValue=100, width=120,
-            callback=self._proportion_changed
+            slider_box, self, "slider_setting",
+            minValue=0, maxValue=100,
+            width=120, callback=self._slider_changed
         )
         self.slider_label = gui.widgetLabel(slider_box, "")
         self._set_slider_label()
@@ -102,22 +105,32 @@ class BlendImages(OWWidget):
         self.image_preview = ImageWidget()
         box.layout().addWidget(self.image_preview)
 
-    def _set_slider_label(self):
-        self.slider_label.setText("Proportion: {}%".format(self.proportion))
+        self.image1_array = None
+        self.image2_array = None
 
-    def _proportion_changed(self):
+    def _set_slider_label(self):
+        self.slider_label.setText("Proportion: {}%".format(self.slider_setting))
+    def _slider_changed(self):
         self._set_slider_label()
-        self.commit()
+        alpha = self.slider_setting / 100.0
+        if self.image1_array is not None and self.image2_array is not None:
+            self.image_preview.set_images(self.image1_array, self.image2_array, alpha)
 
     @Inputs.image1
     def set_image1(self, image1):
         self.image1_array = image1
-        self.image_preview.set_images(self.image1_array, self.image2_array)
+        if self.image1_array is not None and self.image2_array is not None:
+            alpha = self.slider
+            self.image_preview.set_images(self.image1_array, self.image2_array, alpha)
 
     @Inputs.image2
     def set_image2(self, image2):
         self.image2_array = image2
-        self.image_preview.set_images(self.image1_array, self.image2_array)
+        if self.image2_array is not None and self.image1_array is not None:
+            alpha = self.slider
+            self.image_preview.set_images(self.image1_array, self.image2_array, alpha)
+
+
 
 if __name__ == "__main__":
     from Orange.widgets.utils.widgetpreview import WidgetPreview
