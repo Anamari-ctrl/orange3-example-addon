@@ -30,7 +30,6 @@ class ImageWidget(QWidget):
     def set_images(self, image1_array, image2_array, alpha):
         self.image1_array = image1_array
         self.image2_array = image2_array
-        self.alpha = alpha
         self.resize_blend_images(alpha)
 
     def resize_blend_images(self, alpha):
@@ -49,7 +48,7 @@ class ImageWidget(QWidget):
         print(f"alpha is: {alpha}")
         if alpha is None:
             alpha = 0.5
-        print(f"tip alphe: {type(alpha)}")
+
         blended_img = alpha * np.array(image1) + (1 - alpha) * np.array(image2)
         blended_image = np.clip(blended_img, 0, 255).astype(np.uint8)
         self.display_image(blended_image)
@@ -120,14 +119,14 @@ class BlendImages(OWWidget):
     def set_image1(self, image1):
         self.image1_array = image1
         if self.image1_array is not None and self.image2_array is not None:
-            alpha = self.slider
+            alpha = self.slider_setting / 100.0
             self.image_preview.set_images(self.image1_array, self.image2_array, alpha)
 
     @Inputs.image2
     def set_image2(self, image2):
         self.image2_array = image2
         if self.image2_array is not None and self.image1_array is not None:
-            alpha = self.slider
+            alpha = self.slider_setting / 100.0
             self.image_preview.set_images(self.image1_array, self.image2_array, alpha)
 
 
