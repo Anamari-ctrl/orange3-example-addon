@@ -65,10 +65,10 @@ class ImageWidget(QWidget):
         return qimage
 
 class BlendImages(OWWidget):
-    name = "Blend two images - slider implementation"
+    name = "Image blending"
     description = "Blend uploaded images"
     icon = "icons/blend.png"
-    priority = 100
+    priority = 120
     keywords = ("data", "show", "read", "open", "image")
     category = "Example - documentation"
 

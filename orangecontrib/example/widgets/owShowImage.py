@@ -40,10 +40,10 @@ class ImageWidget(QWidget):
         return qimage
 
 class ShowImage(OWWidget):
-    name = "Show image"
+    name = "Image Preview"
     description = "Preview uploaded image"
     icon = "icons/showImage.jpg"
-    priority = 100
+    priority = 110
     keywords = ("data", "show", "read", "open", "image")
     category = "Example - documentation"
 

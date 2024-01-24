@@ -1,17 +1,12 @@
 import numpy as np
 from Orange.data import Table
-from Orange.widgets import gui
 from orangewidget.widget import settings
 from Orange.widgets.settings import Setting
 from Orange.widgets.widget import OWWidget, Input, Output, Msg
-from AnyQt.QtWidgets import \
-    QStyle, QComboBox, QMessageBox, QGridLayout, QLabel, \
-    QLineEdit, QSizePolicy as Policy, QCompleter
-from AnyQt.QtCore import Qt, QTimer, QSize, QUrl, pyqtSignal
-from AnyQt.QtGui import QBrush
-from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QPushButton
-from PyQt5.QtGui import QIcon
+from AnyQt.QtWidgets import QMessageBox, QGridLayout
+from PyQt5.QtWidgets import QFileDialog, QPushButton
 from PIL import Image
+
 class uploadFile(OWWidget):
     # Widget needs a name, or it is considered an abstract widget
     # and not shown in the menu.
@@ -79,7 +74,7 @@ class uploadFile(OWWidget):
     def popup_clicked(self, i):
         if i.text() == ("&Yes"):
             img = np.array(Image.open(self.image))
-            Image.fromarray(img).save('starry_night_upload.jpg')
+            Image.fromarray(img).save('uploadedFile.jpg')
             self.Outputs.image.send(img)
             self.close()
 
