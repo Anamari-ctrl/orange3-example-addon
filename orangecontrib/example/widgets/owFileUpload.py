@@ -15,6 +15,7 @@ from Orange.widgets import gui
 def summarize_ndarray(a:np.ndarray):
     return PartialSummary(f"{a.shape[0]}x{a.shape[1]}", f"Image of size {a.shape[0]}x{a.shape[1]}")
 
+
 class uploadFile(OWWidget):
     # Widget needs a name, or it is considered an abstract widget
     # and not shown in the menu.
@@ -34,6 +35,8 @@ class uploadFile(OWWidget):
     filename = Setting(None)
 
     want_main_area = False
+    resizing_enabled = False
+
 
     # TODO: We declare classes for Warning, Information and Errors
 
@@ -51,7 +54,7 @@ class uploadFile(OWWidget):
 
         gui.button(self.controlArea, self, label="Load image", callback=self.browse_file)
         box = gui.widgetBox(self.controlArea, "Info")
-        self.label = gui.widgetLabel(box, "")
+        self.label = gui.widgetLabel(box, "", labelWidth=300)
         self.load_image()
 
     def browse_file(self):
@@ -69,7 +72,9 @@ class uploadFile(OWWidget):
             self.label.setText("No file selected")
             img = None
         else:
-            self.label.setText(self.filename)
+            path = os.path.split(self.filename)
+            name = path[1]
+            self.label.setText(name)
             img = np.array(Image.open(self.filename))
 
         self.Outputs.image.send(img)
