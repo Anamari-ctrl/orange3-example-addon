@@ -1,6 +1,6 @@
 import numpy as np
 from PIL import Image
-from AnyQt.QtWidgets import QLabel, QVBoxLayout, QWidget
+from AnyQt.QtWidgets import QLabel, QVBoxLayout, QWidget, QSizePolicy
 from AnyQt.QtGui import QImage, QPixmap
 
 from orangewidget.widget import settings
@@ -39,7 +39,7 @@ class ImageWidget(QWidget):
         self.blend_images(img1_resized, img2_resized, alpha)
 
     def blend_images(self, image1, image2, alpha):
-        print(f"alpha is: {alpha}")
+        # print(f"alpha is: {alpha}")
         if alpha is None:
             alpha = 0.5
 
@@ -79,46 +79,45 @@ class BlendImages(OWWidget):
     # commitOnChange = settings.Setting(0)
     slider_setting = settings.Setting(50, min=0, max=100)
 
-    want_main_area = False
+    want_control_area = False
     buttons_area_orientation = False
 
     def __init__(self):
         super().__init__()
 
-        slider_box = gui.widgetBox(self.controlArea, "Blend Proportion")
+        slider_box = gui.hBox(self.mainArea, "Blend Proportion")
         self.slider = gui.hSlider(
             slider_box, self, "slider_setting",
             minValue=0, maxValue=100,
-            width=120, callback=self._slider_changed
+            callback=self._slider_changed, createLabel=False,
+            sizePolicy=(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
         )
-        self.slider_label = gui.widgetLabel(slider_box, "")
-        self._set_slider_label()
 
-        box = gui.widgetBox(self.controlArea, "")
+
+        box = gui.widgetBox(self.mainArea, "")
         self.image_preview = ImageWidget()
         box.layout().addWidget(self.image_preview)
 
         self.image1_array = None
         self.image2_array = None
 
-    def _set_slider_label(self):
-        self.slider_label.setText("Proportion: {}%".format(self.slider_setting))
+
     def _slider_changed(self):
-        self._set_slider_label()
-        alpha = self.slider_setting / 100.0
-        if self.image1_array is not None and self.image2_array is not None:
-            self.image_preview.set_images(self.image1_array, self.image2_array, alpha)
+        self.update_image()
 
     @Inputs.image1
     def set_image1(self, image1):
         self.image1_array = image1
-        if self.image1_array is not None and self.image2_array is not None:
-            alpha = self.slider_setting / 100.0
-            self.image_preview.set_images(self.image1_array, self.image2_array, alpha)
 
     @Inputs.image2
     def set_image2(self, image2):
         self.image2_array = image2
+
+    # ko canvas sprocesira signal, ki ga pošljejo vse povezane komponente
+    def handleNewSignals(self):
+        self.update_image()
+
+    def update_image(self):
         if self.image2_array is not None and self.image1_array is not None:
             alpha = self.slider_setting / 100.0
             self.image_preview.set_images(self.image1_array, self.image2_array, alpha)
