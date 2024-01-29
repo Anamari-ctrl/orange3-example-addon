@@ -1,13 +1,10 @@
 import numpy as np
-from AnyQt.QtWidgets import QLabel, QVBoxLayout
+from AnyQt.QtWidgets import QLabel, QVBoxLayout, QWidget
+from AnyQt.QtGui import QImage, QPixmap
 
 from Orange.widgets.settings import Setting
 from Orange.widgets.widget import OWWidget, Input, Output
 from Orange.widgets import gui
-
-# TODO ali tega ne sme biti?
-from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QPushButton
-from PyQt5.QtGui import QImage, QPixmap
 
 
 class ImageWidget(QWidget):
@@ -47,10 +44,10 @@ class ShowImage(OWWidget):
     label = Setting("")
 
     class Inputs:
-        image = Input("image", np.ndarray, auto_summary=False)
+        image = Input("image", np.ndarray)
 
     class Outputs:
-        image = Output("image", np.ndarray, auto_summary=False)
+        image = Output("image", np.ndarray)
 
     want_main_area = False
     buttons_area_orientation = False
@@ -65,6 +62,7 @@ class ShowImage(OWWidget):
     @Inputs.image
     def show_image(self, image_array):
         self.image_preview.update_image(image_array)
+
 
 if __name__ == "__main__":
     from Orange.widgets.utils.widgetpreview import WidgetPreview
