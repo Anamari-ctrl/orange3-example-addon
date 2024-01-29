@@ -3,7 +3,7 @@ from PIL import Image
 from AnyQt.QtWidgets import QLabel, QVBoxLayout, QWidget
 from AnyQt.QtGui import QImage, QPixmap
 
-
+from orangewidget.widget import settings
 from Orange.widgets.settings import Setting
 from Orange.widgets.widget import OWWidget, Input, Output
 from Orange.widgets import gui

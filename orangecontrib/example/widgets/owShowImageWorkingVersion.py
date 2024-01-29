@@ -34,7 +34,7 @@ class ImageWidget(QWidget):
         return qimage
 
 class ShowImage(OWWidget):
-    name = "Image Preview"
+    name = "Image Preview working version"
     description = "Preview uploaded image"
     icon = "icons/showImage.jpg"
     priority = 110
@@ -51,6 +51,7 @@ class ShowImage(OWWidget):
 
     want_main_area = False
     buttons_area_orientation = False
+    resizing_enabled = False
 
     def __init__(self):
         super().__init__()
