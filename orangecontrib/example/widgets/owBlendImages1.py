@@ -1,16 +1,11 @@
 import numpy as np
-
-from orangewidget.widget import settings
-from Orange.widgets.settings import Setting
-from Orange.widgets.widget import OWWidget, Input, Output, Msg
-from AnyQt.QtWidgets import (
-    QStyle, QComboBox, QMessageBox, QGridLayout, QLabel,
-    QLineEdit, QSizePolicy as Policy, QCompleter, QVBoxLayout
-)
-from AnyQt.QtCore import Qt, QSize
-from PyQt5.QtGui import QImage, QPixmap
-from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QFileDialog, QPushButton
 from PIL import Image
+from AnyQt.QtWidgets import QLabel, QVBoxLayout, QWidget
+from AnyQt.QtGui import QImage, QPixmap
+
+
+from Orange.widgets.settings import Setting
+from Orange.widgets.widget import OWWidget, Input, Output
 from Orange.widgets import gui
 
 
@@ -64,7 +59,7 @@ class ImageWidget(QWidget):
         return qimage
 
 class BlendImages(OWWidget):
-    name = "Image blending"
+    name = "Image blending working version"
     description = "Blend uploaded images"
     icon = "icons/blend.png"
     priority = 120
