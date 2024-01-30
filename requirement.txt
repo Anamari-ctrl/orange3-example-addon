@@ -1,0 +1,9 @@
+numpy
+AnyQt
+orange3
+pillow
+PyQt4
+PyQt5
+PyQt6
+PySide
+PySide2

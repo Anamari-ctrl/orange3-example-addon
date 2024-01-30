@@ -75,8 +75,10 @@ class uploadFile(OWWidget):
             path = os.path.split(self.filename)
             name = path[1]
             self.label.setText(name)
-            img = np.array(Image.open(self.filename))
-
+            try:
+                img = np.array(Image.open(self.filename))
+            except:
+                img = None
         self.Outputs.image.send(img)
 
 
