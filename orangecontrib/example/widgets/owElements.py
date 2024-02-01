@@ -71,8 +71,6 @@ class Elements(OWWidget):
 
         if self.invert:
             temp = 255 - temp
-            temp = self.image_array.copy()
-            temp = 255 - temp
 
         self.Outputs.image.send(temp)
 
