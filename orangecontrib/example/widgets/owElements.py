@@ -36,19 +36,23 @@ class Elements(OWWidget):
     resizing_enabled = False
 
     color_channel = Setting(0)
-    invert = Setting(False)
+    invert = Setting(0)
+    brightness = Setting(0)
 
     def __init__(self):
         super().__init__()
         self.image_array = None
 
         self.rgb_combobox = gui.comboBox(self.controlArea, self, "color_channel", box='Color Channels',
-                                         items=["R", "G", "B"], sendSelectedValue=True, callback=self.commit)
+                                         items=["R", "G", "B"], callback=self.commit)
 
         self.check_box = gui.checkBox(self.controlArea, self, "invert",
                                       'Invert pixels',
                                       tooltip='Invert pixels',
                                       callback=self.commit)
+
+        self.slider = gui.hSlider(self.controlArea, self, "brightness", box='Brightness',
+                                  callback=self.commit, minValue=0, maxValue=255, step=1)
 
     @Inputs.image
     def set_image1(self, image):
@@ -58,25 +62,22 @@ class Elements(OWWidget):
         self.commit()
 
     def commit(self):
-        color = Color(self.rgb_combobox.currentIndex())
-        print(f"color {color}")
+        # color = Color(self.rgb_combobox.currentIndex())
+        # print(f"color {self.color_channel}")
+        print()
 
         temp = self.image_array.copy()
-        if color == Color.RED:
+        if self.color_channel == Color.RED.value:
             temp[:, :, (1, 2)] = 0
-        elif color == Color.GREEN:
+        elif self.color_channel == Color.GREEN.value:
             temp[:, :, (0, 2)] = 0
-        elif color == Color.BLUE:
+        elif self.color_channel == Color.BLUE.value:
             temp[:, :, (0, 1)] = 0
 
         if self.invert:
             temp = 255 - temp
 
         self.Outputs.image.send(temp)
-
-
-
-
 
 
 if __name__ == "__main__":
