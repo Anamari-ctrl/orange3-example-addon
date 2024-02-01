@@ -19,7 +19,7 @@ def summarize_ndarray(a:np.ndarray):
 class uploadFile(OWWidget):
     # Widget needs a name, or it is considered an abstract widget
     # and not shown in the menu.
-    name = "Load image - right version"
+    name = "Load image"
     description = "Load image from local directory"
     icon = "icons/uploadImage.png"
     priority = 100

@@ -31,7 +31,7 @@ class ImageWidget(QWidget):
         return qimage
 
 class ShowImage(OWWidget):
-    name = "Image Preview working version"
+    name = "Image Preview"
     description = "Preview uploaded image"
     icon = "icons/showImage.jpg"
     priority = 110

@@ -6,14 +6,17 @@ from Orange.widgets import gui
 from orangewidget.settings import Setting
 from enum import Enum
 
+
 class Color(Enum):
     RED = 1
     GREEN = 2
     BLUE = 3
 
+
 class WidgetSettings:
     def __init__(self):
         self.color = Color.RED
+
 
 class Elements(OWWidget):
     name = "GUI Elements"
@@ -35,6 +38,7 @@ class Elements(OWWidget):
     def __init__(self):
         super().__init__()
         self.settings = WidgetSettings()
+        self.image_array = None
 
         self.rgb_combobox = gui.comboBox(self.controlArea, self, "color_channel", box='Color Channels',
                                          items=["R", "G", "B"],
@@ -51,11 +55,25 @@ class Elements(OWWidget):
         elif self.rgb_combobox.currentText() == "B":
             self.settings.color = Color.BLUE
 
-    def process_image(self):
-        # vzamem input
-        return 0
-        # self.settings.color -> tuki je ze izbrana barva
+        self.handleNewSignals()
 
+    @Inputs.image
+    def set_image1(self, image):
+        self.image_array = image
+
+    def handleNewSignals(self):
+        print("Handle new signals")
+        print(self.settings.color)
+        temp = self.image_array.copy()
+        if self.settings.color == Color.RED:
+            temp[:, :, (1, 2)] = 0
+            print("Here")
+        elif self.settings.color == Color.GREEN:
+            temp[:, :, (0, 2)] = 0
+        elif self.settings.color == Color.BLUE:
+            temp[:, :, (0, 1)] = 0
+
+        self.Outputs.image.send(temp)
 
 
 if __name__ == "__main__":
