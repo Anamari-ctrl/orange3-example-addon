@@ -8,14 +8,10 @@ from enum import Enum
 
 
 class Color(Enum):
-    RED = 1
-    GREEN = 2
-    BLUE = 3
+    RED = 0
+    GREEN = 1
+    BLUE = 2
 
-
-class WidgetSettings:
-    def __init__(self):
-        self.color = Color.RED
 
 
 class Elements(OWWidget):
@@ -37,40 +33,28 @@ class Elements(OWWidget):
 
     def __init__(self):
         super().__init__()
-        self.settings = WidgetSettings()
         self.image_array = None
 
         self.rgb_combobox = gui.comboBox(self.controlArea, self, "color_channel", box='Color Channels',
-                                         items=["R", "G", "B"],
-                                         sendSelectedValue=True, callback=self.dropdown_changed)
-
-    def dropdown_changed(self):
-        print("Dropdown changed")
-        print(self.rgb_combobox.currentText())
-
-        if self.rgb_combobox.currentText() == "R":
-            self.settings.color = Color.RED
-        elif self.rgb_combobox.currentText() == "G":
-            self.settings.color = Color.GREEN
-        elif self.rgb_combobox.currentText() == "B":
-            self.settings.color = Color.BLUE
-
-        self.handleNewSignals()
+                                         items=["R", "G", "B"], sendSelectedValue=True, callback=self.commit)
 
     @Inputs.image
     def set_image1(self, image):
         self.image_array = image
 
     def handleNewSignals(self):
-        print("Handle new signals")
-        print(self.settings.color)
+        self.commit()
+
+    def commit(self):
+        color = Color(self.rgb_combobox.currentIndex())
+        print(f"color {color}")
+
         temp = self.image_array.copy()
-        if self.settings.color == Color.RED:
+        if color == Color.RED:
             temp[:, :, (1, 2)] = 0
-            print("Here")
-        elif self.settings.color == Color.GREEN:
+        elif color == Color.GREEN:
             temp[:, :, (0, 2)] = 0
-        elif self.settings.color == Color.BLUE:
+        elif color == Color.BLUE:
             temp[:, :, (0, 1)] = 0
 
         self.Outputs.image.send(temp)
