@@ -69,8 +69,10 @@ class Elements(OWWidget):
         elif color == Color.BLUE:
             temp[:, :, (0, 1)] = 0
 
-        temp = self.image_array.copy()
-        temp = 255 - temp
+        if self.invert:
+            temp = 255 - temp
+            temp = self.image_array.copy()
+            temp = 255 - temp
 
         self.Outputs.image.send(temp)
 
