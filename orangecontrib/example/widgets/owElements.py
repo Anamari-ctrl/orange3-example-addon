@@ -6,6 +6,13 @@ from Orange.widgets import gui
 from orangewidget.settings import Setting
 from enum import Enum
 
+from orangewidget.utils.signals import summarize, PartialSummary
+
+
+@summarize.register
+def summarize_ndarray(a: np.ndarray):
+    return PartialSummary(f"{a.shape[0]}x{a.shape[1]}", f"Image of size {a.shape[0]}x{a.shape[1]}")
+
 
 class Color(Enum):
     RED = 0
@@ -37,8 +44,11 @@ class Elements(OWWidget):
         self.rgb_combobox = gui.comboBox(self.controlArea, self, "color_channel", box='Color Channels',
                                          items=["R", "G", "B"], sendSelectedValue=True, callback=self.commit)
 
-        self.check_box = gui.checkBox(self.controlArea, self, "invert", label="Invert",
-                                      sendSelectedValue=True, checked=False)
+
+        self.check_box = gui.checkBox(self.controlArea, self, "invert",
+                                      'Invert pixels',
+                                      tooltip='Invert pixels',
+                                      callback=self.invert)
 
     @Inputs.image
     def set_image1(self, image):
