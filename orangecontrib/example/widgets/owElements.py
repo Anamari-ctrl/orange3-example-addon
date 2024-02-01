@@ -36,6 +36,7 @@ class Elements(OWWidget):
     resizing_enabled = False
 
     color_channel = Setting(0)
+    invert = Setting(False)
 
     def __init__(self):
         super().__init__()
