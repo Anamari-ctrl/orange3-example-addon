@@ -45,11 +45,10 @@ class Elements(OWWidget):
         self.rgb_combobox = gui.comboBox(self.controlArea, self, "color_channel", box='Color Channels',
                                          items=["R", "G", "B"], sendSelectedValue=True, callback=self.commit)
 
-
         self.check_box = gui.checkBox(self.controlArea, self, "invert",
                                       'Invert pixels',
                                       tooltip='Invert pixels',
-                                      callback=self.invert)
+                                      callback=self.commit)
 
     @Inputs.image
     def set_image1(self, image):
@@ -57,7 +56,6 @@ class Elements(OWWidget):
 
     def handleNewSignals(self):
         self.commit()
-        self.invert()
 
     def commit(self):
         color = Color(self.rgb_combobox.currentIndex())
@@ -71,15 +69,14 @@ class Elements(OWWidget):
         elif color == Color.BLUE:
             temp[:, :, (0, 1)] = 0
 
-        self.Outputs.image.send(temp)
-
-    def invert(self):
-        if not self.check_box.isChecked():
-            return
-        print("invert")
         temp = self.image_array.copy()
         temp = 255 - temp
+
         self.Outputs.image.send(temp)
+
+
+
+
 
 
 if __name__ == "__main__":
