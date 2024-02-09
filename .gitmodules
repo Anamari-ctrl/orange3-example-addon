@@ -1,0 +1,3 @@
+[submodule "orange3-network"]
+	path = orange3-network
+	url = git@github.com:janezd/orange3-network.git
